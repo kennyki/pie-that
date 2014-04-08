@@ -12,7 +12,7 @@
 
 		importBtn.addEventListener("click", function(e) {
 			chrome.tabs.create({
-				url: "../pie-that/pie-that.html"
+				url: "../index.html"
 			});
 		});
 	});

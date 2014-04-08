@@ -1,0 +1,25 @@
+<!DOCTYPE HTML>
+<html data-ng-app="pieThat">
+	<head>
+		<title>Pie That!</title>
+		<link rel="stylesheet" type="text/css" href="vendors/bootstrap/css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="app/app.css">
+	</head>
+	<body>
+
+		<div class="container rgc-container">
+			<div class="row rgc-view">
+				<div data-ng-view class="col-md-12"></div>
+			</div>
+		</div>
+
+		<script src="vendors/angular/angular.min.js"></script>
+		<script src="vendors/angular-route/angular-route.min.js"></script>
+		<script src="vendors/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+
+		<script src="app/app.js"></script>
+		<script src="app/factories/bookmarkParser.js"></script>
+		<script src="app/controllers/main.js"></script>
+
+	</body>
+</html>

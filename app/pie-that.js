@@ -77,7 +77,7 @@
 		chrome.bookmarks.getTree(function(nodes) {
 			var pieThat = new PieThat(nodes[0]);
 
-			mainDiv.innerHTML = JSON.stringify(pieThat.boards, null, "\t");
+			// mainDiv.innerHTML = JSON.stringify(pieThat.boards, null, "\t");
 		});
 	});
 
