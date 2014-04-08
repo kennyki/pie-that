@@ -1,0 +1,11 @@
+<div class="panel panel-primary" data-ng-repeat="board in boards">
+	<div class="panel-heading">
+		{{board.name}}
+		<span class="badge pull-right">{{getLinkCount(board)}} links</span>
+	</div>
+	<div class="list-group">
+		<div class="list-group-item" data-ng-repeat="link in board.links">
+			<a href="{{link.url}}">{{link.title}}</a>
+		</div>
+	</div>
+</div>

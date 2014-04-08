@@ -15,6 +15,11 @@
 				"Mobile bookmarks": true
 			},
 
+			URL_FILTERS: [
+				// starts with chrome (case-insensitive)
+				/^chrome/i
+			],
+
 			boards: [],
 
 			parse: function parse(callback) {
@@ -26,6 +31,7 @@
 					var root = nodes[0];
 
 					$this.createBoard(root);
+					$this.processBoards();
 
 					if (typeof(callback) == "function") {
 						callback($this.boards);
@@ -56,14 +62,29 @@
 					var isChildAFolder = (child.children && child.children.length != 0);
 
 					if (isChildAFolder) {
+						// recurring call
 						this.createBoard(child, board);
-					} else {
+
+					} else if (child.url && this.isUrlValid(child.url)) {
+						// only add if child URL is valid
 						links.push({
 							title: this.removeNewLines(child.title),
 							url: child.url
 						});
 					}
 				}, this);
+			},
+
+			isUrlValid: function isUrlValid(url) {
+				// invert the result of some
+				var valid = !this.URL_FILTERS.some(function(filter) {
+					if (url.match(filter)) {
+						// exit
+						return true;
+					}
+				}, this);
+
+				return valid;
 			},
 
 			getBoardName: function getBoardName(node, board) {
@@ -81,6 +102,33 @@
 			removeNewLines: function removeNewLines(str) {
 				// TODO: should just do HTML sanitize
 				return str.replace(/(\r\n|\n|\r|<br>)/gm, " ");
+			},
+
+			processBoards: function processBoards() {
+				var boards = this.boards;
+				var boardByName = {};
+
+				boards.forEach(function(board, i) {
+					// default name
+					if (!board.name) {
+						board.name = "To be defined";
+					}
+
+					var name = board.name;
+					var existingBoard = boardByName[name];
+
+					if (existingBoard) {
+						// merge by:
+						// concat the links
+						existingBoard.links.push.apply(existingBoard.links, board.links);
+						// remove the board located at later index
+						boards.splice(i, 1);
+
+					} else {
+						boardByName[name] = board;
+					}
+
+				}, this);
 			}
 
 		};

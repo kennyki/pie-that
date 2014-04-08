@@ -4,6 +4,10 @@
 		// default
 		$scope.boards = [];
 
+		$scope.getLinkCount = function getLinkCount(board) {
+			return board.links.length;
+		};
+
 		var bookmarkParser = new BookmarkParser();
 
 		bookmarkParser.parse(function(boards) {
