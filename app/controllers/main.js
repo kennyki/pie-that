@@ -1,6 +1,6 @@
 (function() {
 
-	var fn = function($scope, BookmarkParser) {
+	var fn = function($scope, BookmarkParser, $modal) {
 		// default
 		$scope.boards = [];
 		$scope.count = {
@@ -134,7 +134,55 @@
 		 * TODO: Need access to Pie's Rest API..
 		 */
 		$scope.startImport = function startImport() {
-			console.log(JSON.stringify($scope.boards), null, 4);
+			var dialog = $modal.open({
+				// starts from root
+				templateUrl: "app/views/import.html",
+				controller: "ImportController",
+				resolve: {
+					// pass the built boards in
+					boards: function() {
+						return $scope.build();
+					}
+				}
+			});
+		};
+
+		/**
+		 * Construct clean data.
+		 *
+		 * @return Data to import.
+		 */
+		$scope.build = function build() {
+			var builtBoards = [];
+
+			$scope.boards.forEach(function(board) {
+				if (!board.selected) {
+					return;
+				}
+
+				var builtBoard = {
+					name: board.name,
+					// TODO: change all reference of "links" to "posts" and "link" to "post"
+					posts: []
+				};
+
+				builtBoards.push(builtBoard);
+
+				board.links.forEach(function(post) {
+					if (!post.selected) {
+						return;
+					}
+
+					var builtPost = {
+						name: post.name,
+						url: post.url
+					};
+
+					builtBoard.posts.push(builtPost);
+				});
+			});
+
+			return builtBoards;
 		};
 
 		// =============================================
@@ -151,7 +199,7 @@
 		});
 	};
 
-	fn["$inject"] = ["$scope", "BookmarkParser"];
+	fn["$inject"] = ["$scope", "BookmarkParser", "$modal"];
 
 	pieThat.controller("MainController", fn);
 
