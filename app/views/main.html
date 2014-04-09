@@ -1,11 +1,35 @@
-<div class="panel panel-primary" data-ng-repeat="board in boards">
-	<div class="panel-heading">
-		{{board.name}}
-		<span class="badge pull-right">{{getLinkCount(board)}} links</span>
+<div class="row">
+	<div class="col-md-3">
+		<div class="panel panel-info">
+			<div class="panel-heading">
+				<h4>Pie That!</h4>
+			</div>
+			<div class="panel-body">
+				<p>Total: {{count.boards}} boards and {{count.links}} links.</p>
+				<button class="btn btn-primary" data-ng-disabled="count.boards <= 0" data-ng-click="startImport()">Import!</button>
+			</div>
+		</div>
 	</div>
-	<div class="list-group">
-		<div class="list-group-item" data-ng-repeat="link in board.links">
-			<a href="{{link.url}}">{{link.title}}</a>
+	<div class="col-md-9">
+		<div class="panel" data-ng-repeat="board in boards" data-ng-class="{'panel-primary': !!board.name, 'panel-danger': !board.name}">
+			<div class="panel-heading">
+				<div class="row">
+					<label class="col-md-6 form-inline pie-link">
+						<input class="pie-checkbox" type="checkbox" data-ng-checked="board.selected" data-ng-click="onToggle($event, toggleBoard(board))" />
+						<!-- Smart enough to check/unchecked the board -->
+						<input class="form-control" type="text" placeholder="Enter board name" data-ng-model="board.name" data-ng-change="toggleBoard(board, !!board.name)" />
+					</label>
+					<div class="col-md-6">
+						<span class="badge pull-right">{{getLinkCount(board)}} links</span>
+					</div>
+				</div>
+			</div>
+			<div class="list-group">
+				<label class="list-group-item pie-link" data-ng-repeat="link in board.links">
+					<input class="pie-checkbox" type="checkbox" data-ng-checked="link.selected" data-ng-click="onToggle($event, toggleLink(link, board))" />
+					<a target="_blank" href="{{link.url}}">{{link.name}}</a>
+				</label>
+			</div>
 		</div>
 	</div>
 </div>

@@ -1,13 +1,19 @@
 (function() {
 
 	var fn = function() {
-		// define class
+		/**
+		 * A utility that makes use of chrome's bookmarks API to
+		 * parse all bookmarks (folder and links)
+		 */
 		var BookmarkParser = function BookmarkParser() {
 			return this;
 		};
 
 		BookmarkParser.prototype = {
 
+			/**
+			 * To be excluded from boards
+			 */
 			EXCLUDES: {
 				"Bookmarks bar": true,
 				"undefined": true,
@@ -15,13 +21,37 @@
 				"Mobile bookmarks": true
 			},
 
+			/**
+			 * To be excluded from links
+			 */
 			URL_FILTERS: [
 				// starts with chrome (case-insensitive)
 				/^chrome/i
 			],
 
-			boards: [],
+			boards: [
+				/*
+					{
+						name: "Pie",
+						isBoard: true,
+						selected: false,
+						links: [
+							{
+								name: "Pie wants to build a global enterprise software firm in Singapore",
+								url: "www.techinasia.com/forget-silicon-valley-pie-build-global-enterprise-software-firm-singapore/",
+								isLink: true,
+								selected: false
+							}
+						]
+					}
+				*/
+			],
 
+			/**
+			 * Start parsing.
+			 *
+			 * @param: callback (Function) will receive an array of board objects
+			 */
 			parse: function parse(callback) {
 				var $this = this;
 				
@@ -39,9 +69,17 @@
 				});
 			},
 
+			/**
+			 * Create a board object and its links. Will push into the instance's boards property.
+			 *
+			 * @param: node (BookmarkTreeNode) the chrome's bookmark node.
+			 * @param: parentBoard (BookmarkTreeNode) the parent folder node (optional).
+			 */
 			createBoard: function createBoard(node, parentBoard) {
 				var board = {
 					name: this.getBoardName(node, parentBoard),
+					isBoard: true,
+					selected: false,
 					links: []
 				};
 
@@ -50,6 +88,12 @@
 				this.createLinks(node, board);
 			},
 
+			/**
+			 * Create links within a board object. Will do a recurring call to create board if a child is folder.
+			 *
+			 * @param: node (BookmarkTreeNode) the chrome's bookmark node.
+			 * @param: board (Object) the board.
+			 */
 			createLinks: function createLinks(node, board) {
 				var links = board.links;
 				var children = node.children;
@@ -68,13 +112,20 @@
 					} else if (child.url && this.isUrlValid(child.url)) {
 						// only add if child URL is valid
 						links.push({
-							title: this.removeNewLines(child.title),
-							url: child.url
+							name: this.removeNewLines(child.title),
+							url: child.url,
+							isLink: true,
+							selected: false
 						});
 					}
 				}, this);
 			},
 
+			/**
+			 * Test a URL against out filters.
+			 *
+			 * @param: url (String) the URL to test.
+			 */
 			isUrlValid: function isUrlValid(url) {
 				// invert the result of some
 				var valid = !this.URL_FILTERS.some(function(filter) {
@@ -87,6 +138,13 @@
 				return valid;
 			},
 
+			/**
+			 * Create a board name based on the node's title.
+			 * Will append " > " if this node is a child of another board.
+			 *
+			 * @param: node (BookmarkTreeNode) the chrome's bookmark node.
+			 * @param: board (Object) the board (optional).
+			 */
 			getBoardName: function getBoardName(node, board) {
 				// let user choose, perhaps
 				var name = (this.EXCLUDES[node.title] ? "" : this.removeNewLines(node.title));
@@ -99,21 +157,24 @@
 				return name;
 			},
 
+			/**
+			 * Remove new lines from a string (to be JSON-valid).
+			 *
+			 * @param: str (String) the string.
+			 */
 			removeNewLines: function removeNewLines(str) {
 				// TODO: should just do HTML sanitize
 				return str.replace(/(\r\n|\n|\r|<br>)/gm, " ");
 			},
 
+			/**
+			 * Ensure that we don't have duplicated boards.
+			 */
 			processBoards: function processBoards() {
 				var boards = this.boards;
 				var boardByName = {};
 
 				boards.forEach(function(board, i) {
-					// default name
-					if (!board.name) {
-						board.name = "To be defined";
-					}
-
 					var name = board.name;
 					var existingBoard = boardByName[name];
 

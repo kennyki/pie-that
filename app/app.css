@@ -1,4 +1,13 @@
 body {
-	margin-top: 20px;
+	margin: 20px 0;
 	background-color: rgb(249, 249, 249);
+}
+
+.pie-link {
+	cursor: pointer;
+}
+
+.pie-checkbox, 
+input[type=checkbox].pie-checkbox {
+	margin-right: 10px;
 }
