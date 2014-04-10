@@ -11,3 +11,7 @@ body {
 input[type=checkbox].pie-checkbox {
 	margin-right: 10px;
 }
+
+.pie-menu {
+	position: fixed;
+}
