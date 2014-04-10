@@ -11,5 +11,6 @@ A demo chrome extension for www.piethis.com to import from bookmarks.
 
 ## TODO
 1. Unit tests.
+1. More URL filters: emails, etc.
 1. Search for board/post.
 1. Posts preview and comment.

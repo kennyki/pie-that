@@ -15,6 +15,14 @@
 				url: "../index.html"
 			});
 		});
+
+		var testBtn = document.getElementById("test-btn");
+
+		testBtn.addEventListener("click", function(e) {
+			chrome.tabs.create({
+				url: "../tests/tests.html"
+			});
+		});
 	});
 
 })();
